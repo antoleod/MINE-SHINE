@@ -3,11 +3,11 @@ import { AvatarAnimator } from './AvatarAnimator.js';
 import { AvatarEmotions } from './AvatarEmotions.js';
 
 export class Avatar {
-    constructor(app, appState, eventBus) {
-        this.app = app;
+    constructor(scene, appState, eventBus) {
+        this.scene = scene;
         this.appState = appState;
         this.eventBus = eventBus;
-        this.container = new PIXI.Container();
+        this.container = new THREE.Group();
         this.builder = new AvatarBuilder();
         this.animator = new AvatarAnimator();
         this.emotions = new AvatarEmotions();
@@ -24,15 +24,14 @@ export class Avatar {
     buildAvatar() {
         this.parts = this.builder.build(this.appState.avatar);
         Object.values(this.parts).forEach(part => {
-            this.container.addChild(part);
+            this.container.add(part);
         });
-        this.container.scale.set(2);
-        this.container.pivot.set(this.container.width / 2, this.container.height / 2);
+        this.container.scale.set(0.5, 0.5, 0.5);
     }
 
     updateAppearance() {
         // Rebuild avatar
-        this.container.removeChildren();
+        this.container.clear();
         this.buildAvatar();
     }
 
@@ -42,10 +41,7 @@ export class Avatar {
     }
 
     setupInteractions() {
-        this.container.eventMode = 'static';
-        this.container.on('pointertap', () => {
-            this.react();
-        });
+        // 3D interactions will be handled by InputManager
     }
 
     react() {
@@ -53,9 +49,9 @@ export class Avatar {
         this.animator.playReaction();
     }
 
-    update(delta) {
-        this.animator.update(delta, this.container);
-        this.emotions.update(delta, this.parts);
+    update() {
+        this.animator.update(this.container);
+        this.emotions.update(this.parts);
     }
 
     resize() {
@@ -63,6 +59,6 @@ export class Avatar {
     }
 
     destroy() {
-        this.container.removeChildren();
+        this.container.clear();
     }
 }

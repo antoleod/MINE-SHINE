@@ -1,14 +1,22 @@
 
 export class Mouth {
     create(data) {
-        const mouth = new PIXI.Graphics();
-        mouth.beginFill(0xFF69B4);
+        let geometry, material;
+
         if (data.style === 'smile') {
-            mouth.arc(0, 5, 10, 0, Math.PI);
+            geometry = new THREE.TorusGeometry(0.05, 0.02, 8, 16, Math.PI);
+            material = new THREE.MeshLambertMaterial({ color: 0xFF69B4 });
         } else {
-            mouth.drawRect(-5, 0, 10, 5);
+            geometry = new THREE.PlaneGeometry(0.1, 0.05);
+            material = new THREE.MeshLambertMaterial({ color: 0xFF69B4 });
         }
-        mouth.y = 5;
+
+        const mouth = new THREE.Mesh(geometry, material);
+        mouth.position.set(0, 1.15, 0.22);
+        if (data.style === 'smile') {
+            mouth.rotation.z = Math.PI;
+        }
+
         return mouth;
     }
 }

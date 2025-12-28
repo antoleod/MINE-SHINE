@@ -1,14 +1,17 @@
 
 export class Head {
     create(data) {
-        const head = new PIXI.Graphics();
-        head.beginFill(this.getSkinTone(data.skinTone || 'light'));
+        let geometry;
         if (data.shape === 'round') {
-            head.drawCircle(0, 0, 25);
+            geometry = new THREE.SphereGeometry(0.25, 16, 16);
         } else {
-            head.drawEllipse(0, 0, 25, 30);
+            geometry = new THREE.SphereGeometry(0.25, 16, 16);
+            geometry.scale(1, 1.2, 1); // Make it slightly oval
         }
-        head.y = -20;
+        const material = new THREE.MeshLambertMaterial({ color: this.getSkinTone(data.skinTone || 'light') });
+        const head = new THREE.Mesh(geometry, material);
+        head.position.y = 1.2;
+        head.castShadow = true;
         return head;
     }
 

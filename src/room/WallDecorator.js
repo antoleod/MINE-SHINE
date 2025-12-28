@@ -1,13 +1,33 @@
 
 export class WallDecorator {
-    constructor(app) {
-        this.app = app;
+    constructor(scene) {
+        this.scene = scene;
     }
 
     create(wallData) {
-        const walls = new PIXI.Graphics();
-        walls.beginFill(this.getColor(wallData.color || 'lightblue'));
-        walls.drawRect(0, 0, this.app.screen.width, this.app.screen.height);
+        const walls = new THREE.Group();
+
+        // Create walls as 3D boxes
+        const wallGeometry = new THREE.BoxGeometry(20, 10, 0.2);
+        const wallMaterial = new THREE.MeshLambertMaterial({ color: this.getColor(wallData.color || 'lightblue') });
+
+        // Back wall
+        const backWall = new THREE.Mesh(wallGeometry, wallMaterial);
+        backWall.position.set(0, 5, -10);
+        walls.add(backWall);
+
+        // Left wall
+        const leftWall = new THREE.Mesh(wallGeometry, wallMaterial);
+        leftWall.position.set(-10, 5, 0);
+        leftWall.rotation.y = Math.PI / 2;
+        walls.add(leftWall);
+
+        // Right wall
+        const rightWall = new THREE.Mesh(wallGeometry, wallMaterial);
+        rightWall.position.set(10, 5, 0);
+        rightWall.rotation.y = Math.PI / 2;
+        walls.add(rightWall);
+
         return walls;
     }
 

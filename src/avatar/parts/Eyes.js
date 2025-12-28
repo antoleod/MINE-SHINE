@@ -1,22 +1,32 @@
 
 export class Eyes {
     create(data) {
-        const eyes = new PIXI.Container();
-        
-        const leftEye = new PIXI.Graphics();
-        leftEye.beginFill(0xFFFFFF);
-        leftEye.drawCircle(-10, 0, 8);
-        leftEye.beginFill(this.getEyeColor(data.color || 'blue'));
-        leftEye.drawCircle(-10, 0, 5);
-        
-        const rightEye = new PIXI.Graphics();
-        rightEye.beginFill(0xFFFFFF);
-        rightEye.drawCircle(10, 0, 8);
-        rightEye.beginFill(this.getEyeColor(data.color || 'blue'));
-        rightEye.drawCircle(10, 0, 5);
-        
-        eyes.addChild(leftEye, rightEye);
-        eyes.y = -15;
+        const eyes = new THREE.Group();
+
+        const eyeGeometry = new THREE.SphereGeometry(0.03, 8, 8);
+        const whiteMaterial = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
+        const colorMaterial = new THREE.MeshLambertMaterial({ color: this.getEyeColor(data.color || 'blue') });
+
+        // Left eye white
+        const leftEyeWhite = new THREE.Mesh(eyeGeometry, whiteMaterial);
+        leftEyeWhite.position.set(-0.08, 1.25, 0.2);
+        eyes.add(leftEyeWhite);
+
+        // Left eye color
+        const leftEyeColor = new THREE.Mesh(eyeGeometry.clone().scale(0.6, 0.6, 0.6), colorMaterial);
+        leftEyeColor.position.set(-0.08, 1.25, 0.22);
+        eyes.add(leftEyeColor);
+
+        // Right eye white
+        const rightEyeWhite = new THREE.Mesh(eyeGeometry, whiteMaterial);
+        rightEyeWhite.position.set(0.08, 1.25, 0.2);
+        eyes.add(rightEyeWhite);
+
+        // Right eye color
+        const rightEyeColor = new THREE.Mesh(eyeGeometry.clone().scale(0.6, 0.6, 0.6), colorMaterial);
+        rightEyeColor.position.set(0.08, 1.25, 0.22);
+        eyes.add(rightEyeColor);
+
         return eyes;
     }
 

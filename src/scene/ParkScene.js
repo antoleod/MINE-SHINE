@@ -1,50 +1,68 @@
 import { BaseScene } from './BaseScene.js';
 
 export class ParkScene extends BaseScene {
-    constructor(app, appState, eventBus) {
-        super(app, appState, eventBus);
+    constructor(scene, appState, eventBus) {
+        super(scene, appState, eventBus);
         this.background = null;
         this.animals = [];
     }
 
     init() {
-        // Green background
-        this.background = new PIXI.Graphics();
-        this.background.beginFill(0x90EE90);
-        this.background.drawRect(0, 0, this.app.screen.width, this.app.screen.height);
-        this.container.addChild(this.background);
+        // Green ground plane
+        const groundGeometry = new THREE.PlaneGeometry(50, 50);
+        const groundMaterial = new THREE.MeshLambertMaterial({ color: 0x90EE90 });
+        this.background = new THREE.Mesh(groundGeometry, groundMaterial);
+        this.background.rotation.x = -Math.PI / 2;
+        this.background.receiveShadow = true;
+        this.container.add(this.background);
 
         // Add some trees, flowers, etc.
         this.addTrees();
         this.addAnimals();
-
-        // Add avatar or allow interaction
     }
 
     addTrees() {
-        // Simple tree graphics
-        const tree = new PIXI.Graphics();
-        tree.beginFill(0x8B4513);
-        tree.drawRect(100, 400, 20, 100);
-        tree.beginFill(0x228B22);
-        tree.drawCircle(110, 380, 50);
-        this.container.addChild(tree);
+        // 3D tree
+        const trunkGeometry = new THREE.CylinderGeometry(0.2, 0.2, 2, 8);
+        const trunkMaterial = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
+        const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
+        trunk.position.set(5, 1, 0);
+        trunk.castShadow = true;
+
+        const leavesGeometry = new THREE.SphereGeometry(1, 8, 6);
+        const leavesMaterial = new THREE.MeshLambertMaterial({ color: 0x228B22 });
+        const leaves = new THREE.Mesh(leavesGeometry, leavesMaterial);
+        leaves.position.set(5, 2.5, 0);
+        leaves.castShadow = true;
+
+        this.container.add(trunk);
+        this.container.add(leaves);
     }
 
     addAnimals() {
-        // Simple butterfly or bird
-        const butterfly = new PIXI.Graphics();
-        butterfly.beginFill(0xFF69B4);
-        butterfly.drawCircle(300, 200, 10);
-        butterfly.drawCircle(320, 200, 10);
-        this.container.addChild(butterfly);
+        // Simple 3D butterfly
+        const wingGeometry = new THREE.PlaneGeometry(0.5, 0.3);
+        const wingMaterial = new THREE.MeshLambertMaterial({ color: 0xFF69B4, side: THREE.DoubleSide });
+
+        const leftWing = new THREE.Mesh(wingGeometry, wingMaterial);
+        leftWing.position.set(0, 0, 0.1);
+        const rightWing = new THREE.Mesh(wingGeometry, wingMaterial);
+        rightWing.position.set(0, 0, -0.1);
+
+        const butterfly = new THREE.Group();
+        butterfly.add(leftWing);
+        butterfly.add(rightWing);
+        butterfly.position.set(10, 2, 0);
+
+        this.container.add(butterfly);
         this.animals.push(butterfly);
     }
 
-    update(delta) {
+    update() {
         // Animate animals
         this.animals.forEach(animal => {
-            animal.x += Math.sin(this.app.ticker.lastTime * 0.001) * 0.5;
+            animal.position.x += Math.sin(Date.now() * 0.001) * 0.01;
+            animal.rotation.z = Math.sin(Date.now() * 0.002) * 0.2;
         });
     }
 

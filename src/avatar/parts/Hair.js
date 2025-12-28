@@ -1,9 +1,11 @@
 
 export class Hair {
     create(data) {
-        const hair = new PIXI.Graphics();
-        hair.beginFill(this.getHairColor(data.color || 'brown'));
-        hair.drawEllipse(0, -30, 30, 20);
+        const geometry = new THREE.SphereGeometry(0.28, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2);
+        const material = new THREE.MeshLambertMaterial({ color: this.getHairColor(data.color || 'brown') });
+        const hair = new THREE.Mesh(geometry, material);
+        hair.position.set(0, 1.35, 0);
+        hair.scale.set(1, 0.6, 1);
         return hair;
     }
 

@@ -1,13 +1,19 @@
 
 export class FloorDecorator {
-    constructor(app) {
-        this.app = app;
+    constructor(scene) {
+        this.scene = scene;
     }
 
     create(floorData) {
-        const floor = new PIXI.Graphics();
-        floor.beginFill(this.getColor(floorData.color || 'brown'));
-        floor.drawRect(0, this.app.screen.height * 0.8, this.app.screen.width, this.app.screen.height * 0.2);
+        const floorGeometry = new THREE.PlaneGeometry(20, 20);
+        const floorMaterial = new THREE.MeshLambertMaterial({ color: this.getColor(floorData.color || 'brown') });
+        const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+
+        // Rotate to horizontal and position at bottom
+        floor.rotation.x = -Math.PI / 2;
+        floor.position.y = 0;
+        floor.receiveShadow = true;
+
         return floor;
     }
 

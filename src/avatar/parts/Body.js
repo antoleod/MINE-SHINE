@@ -1,10 +1,11 @@
 
 export class Body {
     create(data) {
-        const body = new PIXI.Graphics();
-        body.beginFill(this.getSkinTone(data.skinTone || 'light'));
-        body.drawEllipse(0, 0, 30, 40);
-        body.y = 50;
+        const geometry = new THREE.CapsuleGeometry(0.3, 0.8, 4, 8);
+        const material = new THREE.MeshLambertMaterial({ color: this.getSkinTone(data.skinTone || 'light') });
+        const body = new THREE.Mesh(geometry, material);
+        body.position.y = 0.5;
+        body.castShadow = true;
         return body;
     }
 
