@@ -8,10 +8,13 @@ import { WorldManager } from '../world/WorldManager.js';
 
 export class Game {
     constructor() {
-        this.app = null;
+        this.scene = null;
+        this.camera = null;
+        this.renderer = null;
+        this.controls = null;
         this.appState = new AppState();
         this.eventBus = new EventBus();
-        this.sceneContainer = new PIXI.Container();
+        this.sceneContainer = new THREE.Group();
         this.sceneManager = null;
         this.uiManager = null;
         this.inputManager = null;
@@ -20,27 +23,48 @@ export class Game {
     }
 
     init() {
-        // Initialize PixiJS app
-        this.app = new PIXI.Application({
-            view: document.getElementById('game-canvas'),
-            width: window.innerWidth,
-            height: window.innerHeight,
-            backgroundColor: 0xffffff,
-            resolution: window.devicePixelRatio || 1,
-            autoDensity: true,
-        });
+        // Initialize Three.js scene
+        this.scene = new THREE.Scene();
+        this.scene.background = new THREE.Color(0xf0f8ff);
+
+        // Camera
+        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        this.camera.position.set(0, 5, 10);
+
+        // Renderer
+        this.renderer = new THREE.WebGLRenderer({ antialias: true });
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        document.getElementById('game-canvas').appendChild(this.renderer.domElement);
+
+        // Controls
+        this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+        this.controls.enableDamping = true;
+        this.controls.dampingFactor = 0.05;
+
+        // Lights
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+        this.scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(10, 10, 5);
+        directionalLight.castShadow = true;
+        this.scene.add(directionalLight);
+
+        // Resize handling
+        window.addEventListener('resize', () => this.resize());
 
         // Initialize managers
         this.saveManager = new SaveManager(this.appState);
-        this.sceneManager = new SceneManager(this.app, this.appState, this.eventBus, this.sceneContainer);
-        this.uiManager = new UIManager(this.app, this.appState, this.eventBus);
-        this.inputManager = new InputManager(this.app, this.eventBus);
-        this.worldManager = new WorldManager(this.app, this.appState, this.eventBus);
+        this.sceneManager = new SceneManager(this.scene, this.appState, this.eventBus, this.sceneContainer);
+        this.uiManager = new UIManager(this.scene, this.appState, this.eventBus);
+        this.inputManager = new InputManager(this.scene, this.camera, this.eventBus);
+        this.worldManager = new WorldManager(this.scene, this.appState, this.eventBus);
 
-        // Add containers to stage
-        this.app.stage.addChild(this.sceneContainer);
-        this.app.stage.addChild(this.uiManager.container);
-        
+        // Add scene container
+        this.scene.add(this.sceneContainer);
+
         // Init managers
         this.uiManager.init();
         this.inputManager.init();
@@ -49,27 +73,29 @@ export class Game {
         // Load saved data
         this.saveManager.load();
 
-        // Start the game loop
-        this.app.ticker.add((delta) => this.update(delta));
-
         // Start with home scene
         this.sceneManager.changeScene('HomeScene');
 
         // Listen for scene changes
         this.eventBus.on('changeScene', (sceneName) => this.sceneManager.changeScene(sceneName));
 
-        // Resize handling
-        window.addEventListener('resize', () => this.resize());
+        // Start render loop
+        this.animate();
     }
 
-    update(delta) {
-        this.sceneManager.update(delta);
-        this.uiManager.update(delta);
-        this.worldManager.update(delta);
+    animate() {
+        requestAnimationFrame(() => this.animate());
+        this.controls.update();
+        this.sceneManager.update();
+        this.uiManager.update();
+        this.worldManager.update();
+        this.renderer.render(this.scene, this.camera);
     }
 
     resize() {
-        this.app.renderer.resize(window.innerWidth, window.innerHeight);
+        this.camera.aspect = window.innerWidth / window.innerHeight;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.sceneManager.resize();
         this.uiManager.resize();
     }

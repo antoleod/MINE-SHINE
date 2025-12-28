@@ -8,8 +8,8 @@ import { SchoolScene } from './SchoolScene.js';
 import { NightScene } from './NightScene.js';
 
 export class SceneManager {
-    constructor(app, appState, eventBus, sceneContainer) {
-        this.app = app;
+    constructor(scene, appState, eventBus, sceneContainer) {
+        this.scene = scene;
         this.appState = appState;
         this.eventBus = eventBus;
         this.sceneContainer = sceneContainer;
@@ -28,21 +28,21 @@ export class SceneManager {
     changeScene(sceneName) {
         if (this.currentScene) {
             this.currentScene.destroy();
-            this.sceneContainer.removeChild(this.currentScene.container);
+            this.sceneContainer.remove(this.currentScene.container);
         }
 
         const SceneClass = this.scenes[sceneName];
         if (SceneClass) {
-            this.currentScene = new SceneClass(this.app, this.appState, this.eventBus);
-            this.sceneContainer.addChild(this.currentScene.container);
+            this.currentScene = new SceneClass(this.scene, this.appState, this.eventBus);
+            this.sceneContainer.add(this.currentScene.container);
             this.currentScene.init();
             this.appState.currentScene = sceneName;
         }
     }
 
-    update(delta) {
+    update() {
         if (this.currentScene) {
-            this.currentScene.update(delta);
+            this.currentScene.update();
         }
     }
 
