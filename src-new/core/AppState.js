@@ -27,9 +27,13 @@ export class AppState {
                 unlockedHair: ['puff', 'bob', 'waves'],
                 unlockedShoes: ['sneakers'],
                 unlockedAccessories: ['none'],
-                unlockedFurniture: ['bed', 'table', 'lamp', 'toybox'],
+                unlockedFurniture: ['bed', 'table', 'lamp', 'toybox', 'rug', 'plant'],
                 unlockedWorlds: ['HomeScene', 'ParkScene', 'ShopScene'],
                 visitedWorlds: {},
+            },
+            challenges: {
+                active: null,
+                completed: {},
             },
         };
         this.listeners = new Set();

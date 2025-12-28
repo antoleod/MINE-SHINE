@@ -9,6 +9,7 @@ import { WorldManager } from '../world/WorldManager.js';
 import { Time } from './Time.js';
 import { Config } from './Config.js';
 import { Progression } from '../save/Progression.js';
+import { Challenges } from './Challenges.js';
 
 export class Game {
     constructor() {
@@ -23,6 +24,7 @@ export class Game {
         this.worldManager = null;
         this.layers = {};
         this.progression = null;
+        this.challenges = null;
     }
 
     init() {
@@ -51,12 +53,14 @@ export class Game {
         this.worldManager = new WorldManager(this.layers.world, this.appState, this.eventBus, this.app);
         this.saveManager = new SaveManager(this.appState, this.eventBus);
         this.progression = new Progression(this.appState);
+        this.challenges = new Challenges(this.appState, this.eventBus);
 
         this.uiManager.init();
         this.inputManager.init();
         this.worldManager.init();
         this.saveManager.load();
         this.saveManager.watch();
+        this.challenges.init();
 
         this.sceneManager.changeScene(this.appState.get('currentScene'));
 
@@ -67,6 +71,10 @@ export class Game {
         });
 
         this.eventBus.on('reward:claim', () => {
+            this.unlockReward();
+            this.eventBus.emit('save:request');
+        });
+        this.eventBus.on('reward:grant', () => {
             this.unlockReward();
             this.eventBus.emit('save:request');
         });
@@ -94,6 +102,7 @@ export class Game {
             Hair: ['puff', 'bob', 'waves', 'pixie', 'long'],
             Shoes: ['sneakers', 'boots', 'slippers', 'sandals'],
             Accessories: ['none', 'earrings', 'glasses', 'hat'],
+            Furniture: ['bed', 'table', 'lamp', 'toybox', 'rug', 'plant', 'shelf', 'sofa'],
             Worlds: ['HomeScene', 'ParkScene', 'ShopScene'],
         };
         const pickFrom = (type) => {

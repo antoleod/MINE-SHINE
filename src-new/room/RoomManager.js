@@ -18,6 +18,12 @@ export class RoomManager {
         this.container.addChild(this.builder.build(style));
         this.restoreFurniture(style.furniture);
         this.eventBus.on('room:style', (patch) => this.applyStyle(patch));
+        this.eventBus.on('room:add', (type) => {
+            const furniture = this.addFurniture(type, { x: 520, y: 470 });
+            this.furnitureItems.push(furniture);
+            this.saveFurniture();
+            this.eventBus.emit('room:added', type);
+        });
     }
 
     applyStyle(patch) {

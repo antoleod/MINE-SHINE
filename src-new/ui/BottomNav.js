@@ -2,6 +2,7 @@ import * as PIXI from 'https://cdn.jsdelivr.net/npm/pixi.js@7.3.2/dist/pixi.mjs'
 import { Button } from './Button.js';
 import { Config } from '../core/Config.js';
 import { FeedbackFX } from './FeedbackFX.js';
+import { CHALLENGE_LIST } from '../core/Challenges.js';
 
 export class BottomNav {
     constructor(appState, eventBus, app) {
@@ -41,6 +42,7 @@ export class BottomNav {
     openAvatarPanel() {
         const skinTones = ['peach', 'sand', 'cocoa', 'almond'];
         const hairStyles = ['puff', 'bob', 'waves', 'pixie', 'long'];
+        const hairColors = ['chestnut', 'midnight', 'honey', 'auburn', 'lilac'];
         this.eventBus.emit('panel:open', {
             cards: [
                 { label: 'Happy', color: 0xffe5b4, icon: this.makeFaceIcon(0xffc86b), action: () => this.select(() => this.eventBus.emit('avatar:emotion', 'happy')) },
@@ -55,6 +57,7 @@ export class BottomNav {
                 { label: 'Adult', color: 0xffe0c9, icon: this.makeBodyIcon(0xffe0c9), action: () => this.select(() => this.eventBus.emit('avatar:body', { body: 'adult', bodySize: 'tall' })) },
                 { label: 'Skin', color: 0xf7e1d7, icon: this.makePaletteIcon(), action: () => this.select(() => this.eventBus.emit('avatar:skin', skinTones[Math.floor(Math.random() * skinTones.length)])) },
                 { label: 'Hair', color: 0xe9edc9, icon: this.makeHairIcon(), action: () => this.select(() => this.eventBus.emit('avatar:hair', hairStyles[Math.floor(Math.random() * hairStyles.length)])) },
+                { label: 'Color', color: 0xe4c1f9, icon: this.makeSparkIcon(), action: () => this.select(() => this.eventBus.emit('avatar:hairColor', hairColors[Math.floor(Math.random() * hairColors.length)])) },
                 { label: 'Smile', color: 0xfff1c1, icon: this.makeHeartIcon(), action: () => this.select(() => this.eventBus.emit('avatar:emotion', 'happy')) },
             ],
             cols: 3,
@@ -85,7 +88,26 @@ export class BottomNav {
                     icon: this.makeSparkIcon(),
                     action: () => this.select(() => this.eventBus.emit('avatar:accessories', style)),
                 })),
+                {
+                    label: 'Decor',
+                    color: 0xe0fbfc,
+                    icon: this.makeHomeIcon(),
+                    action: () => this.openDecorPanel(),
+                },
             ],
+            cols: 3,
+        });
+    }
+
+    openDecorPanel() {
+        const unlockedFurniture = this.appState.get('progression.unlockedFurniture') || [];
+        this.eventBus.emit('panel:open', {
+            cards: unlockedFurniture.map((item) => ({
+                label: item[0].toUpperCase() + item.slice(1),
+                color: 0xf6bd60,
+                icon: this.makeLeafIcon(),
+                action: () => this.select(() => this.eventBus.emit('room:add', item)),
+            })),
             cols: 3,
         });
     }
@@ -113,10 +135,33 @@ export class BottomNav {
             cards: [
                 { label: 'Stars', color: 0xfff1c1, icon: this.makeStarIcon(), action: () => this.select(() => this.eventBus.emit('reward:claim')) },
                 { label: 'Sparkles', color: 0xa0c4ff, icon: this.makeSparkIcon(), action: () => this.select(() => this.eventBus.emit('reward:claim')) },
+                { label: 'Tasks', color: 0xfde2e4, icon: this.makeChecklistIcon(), action: () => this.openChallengesPanel() },
         ],
         cols: 2,
     });
 }
+
+    openChallengesPanel() {
+        const active = this.appState.get('challenges.active');
+        const completed = this.appState.get('challenges.completed') || {};
+        this.eventBus.emit('panel:open', {
+            cards: CHALLENGE_LIST.map((challenge) => {
+                const isCompleted = completed[challenge.id];
+                const isActive = active === challenge.id;
+                const label = isCompleted ? `${challenge.label} Done` : (isActive ? `${challenge.label} Go` : challenge.label);
+                return {
+                    label,
+                    color: challenge.color,
+                    icon: this.makeChecklistIcon(),
+                    action: () => {
+                        if (isCompleted) return;
+                        this.select(() => this.eventBus.emit('challenge:select', challenge.id));
+                    },
+                };
+            }),
+            cols: 2,
+        });
+    }
 
     select(action) {
         action();
@@ -250,6 +295,24 @@ export class BottomNav {
         g.beginFill(0xa0c4ff);
         g.drawPolygon([0, -12, 4, -2, 12, 0, 4, 2, 0, 12, -4, 2, -12, 0, -4, -2]);
         g.endFill();
+        return g;
+    }
+
+    makeLeafIcon() {
+        const g = new PIXI.Graphics();
+        g.beginFill(0x90be6d);
+        g.drawRoundedRect(-10, -12, 20, 26, 10);
+        g.endFill();
+        return g;
+    }
+
+    makeChecklistIcon() {
+        const g = new PIXI.Graphics();
+        g.lineStyle(4, 0x5f5047, 1);
+        g.drawRoundedRect(-12, -12, 24, 24, 6);
+        g.moveTo(-6, 0);
+        g.lineTo(-2, 4);
+        g.lineTo(6, -4);
         return g;
     }
 }

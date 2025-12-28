@@ -68,6 +68,14 @@ export class HomeScene extends BaseScene {
             this.eventBus.emit('save:request');
         });
 
+        this.eventBus.on('avatar:hairColor', (hairColor) => {
+            const current = this.appState.get('avatar');
+            this.avatar.parts.hair.setStyle({ hair: current.hair, hairColor });
+            this.avatar.parts.eyebrows.setStyle({ hairColor });
+            this.appState.update('avatar', { hairColor });
+            this.eventBus.emit('save:request');
+        });
+
         this.eventBus.on('avatar:skin', (skin) => {
             const current = this.appState.get('avatar');
             this.avatar.parts.body.setStyle({ ...current, skin });

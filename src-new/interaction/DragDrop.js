@@ -6,6 +6,7 @@ export class DragDrop {
         this.bounds = bounds;
         this.dragging = false;
         this.offset = { x: 0, y: 0 };
+        this.goal = { x: target.x, y: target.y };
         this.enable();
     }
 
@@ -36,8 +37,10 @@ export class DragDrop {
     onMove(event) {
         if (!this.dragging) return;
         const pos = event.data.getLocalPosition(this.target.parent);
-        this.target.x = MathUtil.clamp(pos.x + this.offset.x, this.bounds.x, this.bounds.x + this.bounds.width);
-        this.target.y = MathUtil.clamp(pos.y + this.offset.y, this.bounds.y, this.bounds.y + this.bounds.height);
+        this.goal.x = MathUtil.clamp(pos.x + this.offset.x, this.bounds.x, this.bounds.x + this.bounds.width);
+        this.goal.y = MathUtil.clamp(pos.y + this.offset.y, this.bounds.y, this.bounds.y + this.bounds.height);
+        this.target.x = MathUtil.lerp(this.target.x, this.goal.x, 0.35);
+        this.target.y = MathUtil.lerp(this.target.y, this.goal.y, 0.35);
     }
 
     snap() {
