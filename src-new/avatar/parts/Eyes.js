@@ -15,6 +15,7 @@ export class Eyes extends PIXI.Container {
         this.addChild(this.left, this.right);
         this.mood = 'smile';
         this.eyeColor = EYE_COLORS[config.eyeColor] || EYE_COLORS.brown;
+        this.lookOffset = { x: 0, y: 0 };
         this.drawEyes();
         this.y = -105;
     }
@@ -24,9 +25,16 @@ export class Eyes extends PIXI.Container {
         this.drawEyes();
     }
 
+    setStyle(config = {}) {
+        if (config.eyeColor) {
+            this.eyeColor = EYE_COLORS[config.eyeColor] || this.eyeColor;
+            this.drawEyes();
+        }
+    }
+
     setLook(offset) {
-        this.left.pivot.set(-offset.x * 12, -offset.y * 8);
-        this.right.pivot.set(-offset.x * 12, -offset.y * 8);
+        this.lookOffset = { x: offset.x, y: offset.y };
+        this.drawEyes();
     }
 
     blink() {
@@ -43,6 +51,8 @@ export class Eyes extends PIXI.Container {
         const focused = this.mood === 'focus';
         const openHeight = this.mood === 'wide' ? 22 : (focused ? 12 : height);
         const sparkle = this.mood === 'sparkle' ? 1 : 0;
+        const pupilOffsetX = this.lookOffset.x * 6;
+        const pupilOffsetY = this.lookOffset.y * 4;
 
         const draw = (g, x) => {
             g.clear();
@@ -50,10 +60,10 @@ export class Eyes extends PIXI.Container {
             g.drawRoundedRect(x - width / 2, -openHeight / 2, width, openHeight, 8);
             g.endFill();
             g.beginFill(this.eyeColor);
-            g.drawCircle(x, 0, 6 + sparkle);
+            g.drawCircle(x + pupilOffsetX, pupilOffsetY, 6 + sparkle);
             g.endFill();
             g.beginFill(0xffffff, 0.9);
-            g.drawCircle(x + 3, -3, 2 + sparkle);
+            g.drawCircle(x + 3 + pupilOffsetX, -3 + pupilOffsetY, 2 + sparkle);
             g.endFill();
         };
 

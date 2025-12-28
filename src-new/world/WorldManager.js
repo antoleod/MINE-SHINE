@@ -24,6 +24,9 @@ export class WorldManager {
         this.background.beginFill(palette.sky || 0xcfe9ff);
         this.background.drawRect(0, 0, w, h * 0.65);
         this.background.endFill();
+        this.background.beginFill(0xffffff, 0.18);
+        this.background.drawRect(0, 0, w, h * 0.25);
+        this.background.endFill();
         this.background.beginFill(palette.ground || 0xf6f2ea);
         this.background.drawRect(0, h * 0.65, w, h * 0.35);
         this.background.endFill();

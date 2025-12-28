@@ -12,7 +12,10 @@ export class ShopScene extends BaseScene {
 
         const counter = new PIXI.Graphics();
         counter.beginFill(0xf4a261);
-        counter.drawRoundedRect(300, 420, 520, 120, 30);
+        counter.drawRoundedRect(290, 420, 540, 120, 34);
+        counter.endFill();
+        counter.beginFill(0xffffff, 0.2);
+        counter.drawRoundedRect(320, 440, 180, 40, 20);
         counter.endFill();
         this.container.addChild(counter);
 
@@ -25,5 +28,14 @@ export class ShopScene extends BaseScene {
         rack.drawCircle(170, 420, 20);
         rack.endFill();
         this.container.addChild(rack);
+
+        const shelf = new PIXI.Graphics();
+        shelf.beginFill(0xffc8dd);
+        shelf.drawRoundedRect(900, 320, 180, 140, 26);
+        shelf.endFill();
+        shelf.beginFill(0xffffff, 0.2);
+        shelf.drawRoundedRect(920, 338, 80, 30, 16);
+        shelf.endFill();
+        this.container.addChild(shelf);
     }
 }

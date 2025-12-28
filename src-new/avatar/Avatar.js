@@ -16,11 +16,12 @@ export class Avatar extends PIXI.Container {
             this.parts.body,
             this.parts.clothes,
             this.parts.shoes,
+            this.parts.hairBack,
             this.parts.head,
             this.parts.eyes,
             this.parts.eyebrows,
             this.parts.mouth,
-            this.parts.hair,
+            this.parts.hairFront,
             this.parts.accessories
         );
     }

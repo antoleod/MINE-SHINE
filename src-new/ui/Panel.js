@@ -44,11 +44,18 @@ export class Panel {
         this.target = 1;
         this.content.removeChildren();
         if (payload && payload.cards) {
-            const gap = 200;
+            const gapX = 200;
+            const gapY = 190;
+            const cols = payload.cols || 3;
             payload.cards.forEach((cardData, index) => {
                 const card = new Card({ label: cardData.label, color: cardData.color });
-                card.container.x = (index - (payload.cards.length - 1) / 2) * gap;
-                card.container.y = 10;
+                if (cardData.icon) {
+                    card.setIcon(cardData.icon);
+                }
+                const col = index % cols;
+                const row = Math.floor(index / cols);
+                card.container.x = (col - (cols - 1) / 2) * gapX;
+                card.container.y = (row - 0.2) * gapY;
                 card.container.on('pointertap', cardData.action);
                 this.content.addChild(card.container);
             });

@@ -28,6 +28,9 @@ export class Furniture extends PIXI.Container {
         this.graphic.beginFill(style.color);
         this.graphic.drawRoundedRect(-style.w / 2, -style.h / 2, style.w, style.h, 18);
         this.graphic.endFill();
+        this.graphic.beginFill(0xffffff, 0.2);
+        this.graphic.drawRoundedRect(-style.w / 2 + 10, -style.h / 2 + 8, style.w * 0.45, style.h * 0.4, 12);
+        this.graphic.endFill();
     }
 
     serialize() {

@@ -47,6 +47,42 @@ export class HomeScene extends BaseScene {
             this.appState.update('avatar', { clothes });
             this.eventBus.emit('save:request');
         });
+
+        this.eventBus.on('avatar:shoes', (shoes) => {
+            this.avatar.parts.shoes.setStyle({ shoes });
+            this.appState.update('avatar', { shoes });
+            this.eventBus.emit('save:request');
+        });
+
+        this.eventBus.on('avatar:accessories', (accessories) => {
+            this.avatar.parts.accessories.setStyle({ accessories });
+            this.appState.update('avatar', { accessories });
+            this.eventBus.emit('save:request');
+        });
+
+        this.eventBus.on('avatar:hair', (hair) => {
+            const current = this.appState.get('avatar');
+            this.avatar.parts.hair.setStyle({ hair, hairColor: current.hairColor });
+            this.avatar.parts.eyebrows.setStyle({ hairColor: current.hairColor });
+            this.appState.update('avatar', { hair });
+            this.eventBus.emit('save:request');
+        });
+
+        this.eventBus.on('avatar:skin', (skin) => {
+            const current = this.appState.get('avatar');
+            this.avatar.parts.body.setStyle({ ...current, skin });
+            this.avatar.parts.head.setStyle({ ...current, skin });
+            this.appState.update('avatar', { skin });
+            this.eventBus.emit('save:request');
+        });
+
+        this.eventBus.on('avatar:body', (patch) => {
+            const current = { ...this.appState.get('avatar'), ...patch };
+            this.avatar.parts.body.setStyle(current);
+            this.avatar.parts.head.setStyle(current);
+            this.appState.update('avatar', patch);
+            this.eventBus.emit('save:request');
+        });
     }
 
     update(time) {

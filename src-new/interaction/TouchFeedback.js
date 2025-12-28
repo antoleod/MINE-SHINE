@@ -4,4 +4,9 @@ export class TouchFeedback {
         setTimeout(() => target.scale.set(1.02), 70);
         setTimeout(() => target.scale.set(1), 140);
     }
+
+    static pulse(target) {
+        target.alpha = 0.85;
+        setTimeout(() => (target.alpha = 1), 160);
+    }
 }

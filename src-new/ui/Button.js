@@ -7,13 +7,13 @@ export class Button {
         this.container = new PIXI.Container();
         this.bg = new PIXI.Graphics();
         this.label = new PIXI.Text(label, {
-            fontFamily: 'Trebuchet MS',
-            fontSize: 14,
-            fill: 0x3a3a3a,
+            fontFamily: 'Fredoka, Trebuchet MS, sans-serif',
+            fontSize: 13,
+            fill: 0x4a3f3b,
         });
         setRoundedRect(this.bg, -width / 2, -height / 2, width, height, 24, color, 1);
         this.label.anchor.set(0.5, 0.5);
-        this.label.y = height * 0.32;
+        this.label.y = height * 0.34;
         this.container.addChild(this.bg, this.label);
         this.container.eventMode = 'static';
         this.container.cursor = 'pointer';

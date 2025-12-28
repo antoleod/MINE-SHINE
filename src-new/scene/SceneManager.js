@@ -24,6 +24,7 @@ export class SceneManager {
         this.app = app;
         this.current = null;
         this.cache = new Map();
+        this.fade = 1;
     }
 
     changeScene(name) {
@@ -41,10 +42,16 @@ export class SceneManager {
         this.current = scene;
         this.container.addChild(this.current.container);
         this.current.enter();
+        this.current.container.alpha = 0;
+        this.fade = 0;
     }
 
     update(time) {
-        if (this.current) this.current.update(time);
+        if (this.current) {
+            this.current.update(time);
+            this.fade = Math.min(1, this.fade + time.delta * 0.003);
+            this.current.container.alpha = this.fade;
+        }
     }
 
     resize() {

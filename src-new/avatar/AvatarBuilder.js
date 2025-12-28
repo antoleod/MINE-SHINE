@@ -11,13 +11,16 @@ import { Avatar } from './Avatar.js';
 
 export class AvatarBuilder {
     build(config) {
+        const hair = new Hair(config);
         const parts = {
             body: new Body(config),
             head: new Head(config),
             eyes: new Eyes(config),
             eyebrows: new Eyebrows(config),
             mouth: new Mouth(config),
-            hair: new Hair(config),
+            hairBack: hair.back,
+            hairFront: hair.front,
+            hair,
             clothes: new Clothes(config),
             shoes: new Shoes(config),
             accessories: new Accessories(config),

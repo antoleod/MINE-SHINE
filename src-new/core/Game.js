@@ -66,6 +66,11 @@ export class Game {
             this.sceneManager.changeScene(sceneName);
         });
 
+        this.eventBus.on('reward:claim', () => {
+            this.unlockReward();
+            this.eventBus.emit('save:request');
+        });
+
         this.app.ticker.add(() => this.update());
         window.addEventListener('resize', () => this.resize());
     }
@@ -81,5 +86,26 @@ export class Game {
         this.sceneManager.resize();
         this.uiManager.resize();
         this.worldManager.resize();
+    }
+
+    unlockReward() {
+        const pools = {
+            Clothes: ['casual', 'sporty', 'cozy', 'rainy', 'sunny', 'dress'],
+            Hair: ['puff', 'bob', 'waves', 'pixie', 'long'],
+            Shoes: ['sneakers', 'boots', 'slippers', 'sandals'],
+            Accessories: ['none', 'earrings', 'glasses', 'hat'],
+            Worlds: ['HomeScene', 'ParkScene', 'ShopScene'],
+        };
+        const pickFrom = (type) => {
+            const unlocked = this.appState.get(`progression.unlocked${type}`) || [];
+            const available = pools[type].filter((item) => !unlocked.includes(item));
+            if (!available.length) return null;
+            return available[Math.floor(Math.random() * available.length)];
+        };
+        const types = Object.keys(pools);
+        const selectedType = types[Math.floor(Math.random() * types.length)];
+        const item = pickFrom(selectedType);
+        if (!item) return;
+        this.progression.unlock(selectedType, item);
     }
 }
