@@ -1,0 +1,9 @@
+{
+  "name": "MineShine",
+  "short_name": "MineShine",
+  "description": "A joyful avatar life-simulation game for children",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f0f8ff",
+  "theme_color": "#4a90e2"
+}
