@@ -1,10 +1,10 @@
 
 export class BaseScene {
-    constructor(app, appState, eventBus) {
-        this.app = app;
+    constructor(scene, appState, eventBus) {
+        this.scene = scene;
         this.appState = appState;
         this.eventBus = eventBus;
-        this.container = new PIXI.Container();
+        this.container = new THREE.Group();
         this.background = null;
         this.interactiveElements = [];
     }
@@ -13,7 +13,7 @@ export class BaseScene {
         // Override in subclasses
     }
 
-    update(delta) {
+    update() {
         // Override in subclasses
     }
 
@@ -23,12 +23,12 @@ export class BaseScene {
 
     destroy() {
         // Clean up
-        this.container.removeChildren();
+        this.container.clear();
         this.interactiveElements = [];
     }
 
     addInteractiveElement(element) {
         this.interactiveElements.push(element);
-        this.container.addChild(element);
+        this.container.add(element);
     }
 }
