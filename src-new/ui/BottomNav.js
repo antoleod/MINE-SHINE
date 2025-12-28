@@ -168,7 +168,16 @@ export class BottomNav {
         this.eventBus.emit('panel:close');
     }
 
-    update() {}
+    update(time) {
+        const activeChallenge = this.appState.get('challenges.active');
+        const rewardsButton = this.buttons[4];
+        if (rewardsButton && activeChallenge && time) {
+            const pulse = 1 + Math.sin(time.elapsed * 0.006) * 0.04;
+            rewardsButton.container.scale.set(pulse);
+        } else if (rewardsButton) {
+            rewardsButton.container.scale.set(1);
+        }
+    }
 
     resize() {
         const w = this.app.screen.width;

@@ -1,3 +1,4 @@
+import * as PIXI from 'https://cdn.jsdelivr.net/npm/pixi.js@7.3.2/dist/pixi.mjs';
 import { BaseScene } from './BaseScene.js';
 import { RoomManager } from '../room/RoomManager.js';
 import { AvatarBuilder } from '../avatar/AvatarBuilder.js';
@@ -11,9 +12,22 @@ export class HomeScene extends BaseScene {
             layers: [0xfef6e4, 0xf6e8c3, 0xf1dca7],
             accent: 0xffffff,
         });
+        this.props = [];
         this.roomManager = new RoomManager(this.appState, this.eventBus);
         this.roomManager.init();
         this.container.addChild(this.roomManager.container);
+
+        const balloon = new PIXI.Graphics();
+        balloon.beginFill(0xffc8dd);
+        balloon.drawCircle(0, 0, 26);
+        balloon.endFill();
+        balloon.lineStyle(2, 0xcdb4db, 0.8);
+        balloon.moveTo(0, 26);
+        balloon.lineTo(0, 64);
+        balloon.x = 980;
+        balloon.y = 260;
+        this.container.addChild(balloon);
+        this.props.push({ sprite: balloon, speed: 0.0012 });
 
         const builder = new AvatarBuilder();
         this.avatar = builder.build(this.appState.get('avatar'));
@@ -26,6 +40,7 @@ export class HomeScene extends BaseScene {
             this.avatar.setEmotion('happy');
             this.avatar.animator.bounce();
             TouchFeedback.bounce(this.avatar);
+            TouchFeedback.pulse(this.avatar);
         });
         this.container.addChild(this.avatar);
 
@@ -95,6 +110,12 @@ export class HomeScene extends BaseScene {
 
     update(time) {
         super.update(time);
+        if (this.roomManager) this.roomManager.update(time);
         if (this.avatar) this.avatar.update(time);
+        if (this.props) {
+            this.props.forEach((prop, index) => {
+                prop.sprite.y += Math.sin(time.elapsed * 0.002 + index) * 0.3;
+            });
+        }
     }
 }

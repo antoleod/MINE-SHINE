@@ -21,6 +21,13 @@ export const CHALLENGE_LIST = [
         color: 0xffafcc,
     },
     {
+        id: 'accessory',
+        label: 'Add a Fun Accessory',
+        type: 'avatar:accessories',
+        match: (value) => value !== 'none',
+        color: 0xcdb4db,
+    },
+    {
         id: 'park',
         label: 'Visit the Park',
         type: 'scene:change',
@@ -36,6 +43,13 @@ export const CHALLENGE_LIST = [
             return furniture.length >= 6;
         },
         color: 0xf6bd60,
+    },
+    {
+        id: 'rug',
+        label: 'Place a Rug',
+        type: 'room:added',
+        match: (value) => value === 'rug',
+        color: 0xf7b2b7,
     },
 ];
 

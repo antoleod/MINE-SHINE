@@ -57,8 +57,15 @@ export class RoomManager {
     }
 
     saveFurniture() {
+        this.furnitureItems.forEach((item) => {
+            item.baseY = item.y;
+        });
         const list = this.furnitureItems.map((item) => item.serialize());
         this.appState.update('room', { furniture: list });
         this.eventBus.emit('save:request');
+    }
+
+    update(time) {
+        this.furnitureItems.forEach((item) => item.update(time));
     }
 }

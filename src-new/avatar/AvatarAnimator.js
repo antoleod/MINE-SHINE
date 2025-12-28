@@ -10,10 +10,17 @@ export class AvatarAnimator {
         this.idleSpeed = Config.avatar.idleBreathSpeed;
         this.lookTime = 0;
         this.focusTimer = 0;
+        this.blinkMin = Config.avatar.blinkMin;
+        this.blinkMax = Config.avatar.blinkMax;
     }
 
     setIdleSpeed(speed) {
         this.idleSpeed = speed;
+    }
+
+    setBlinkRange(min, max) {
+        this.blinkMin = min;
+        this.blinkMax = max;
     }
 
     lookAt(point) {
@@ -56,7 +63,7 @@ export class AvatarAnimator {
         this.blinkTimer -= time.delta / 1000;
         if (this.blinkTimer <= 0) {
             this.blink();
-            this.blinkTimer = MathUtil.rand(Config.avatar.blinkMin, Config.avatar.blinkMax);
+            this.blinkTimer = MathUtil.rand(this.blinkMin, this.blinkMax);
         }
     }
 }

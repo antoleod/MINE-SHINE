@@ -14,6 +14,8 @@ export class Panel {
         this.visible = false;
         this.progress = 0;
         this.target = 0;
+        this.idleTimer = 0;
+        this.autoCloseDelay = 12;
         this.draw();
         this.container.visible = false;
     }
@@ -36,12 +38,15 @@ export class Panel {
         this.content.y = this.app.screen.height / 2;
         this.container.scale.set(0.9);
         this.container.alpha = 0;
+        this.container.eventMode = 'static';
+        this.container.on('pointerdown', () => this.resetIdle());
     }
 
     open(payload) {
         this.visible = true;
         this.container.visible = true;
         this.target = 1;
+        this.resetIdle();
         this.content.removeChildren();
         if (payload && payload.cards) {
             const gapX = 200;
@@ -56,7 +61,10 @@ export class Panel {
                 const row = Math.floor(index / cols);
                 card.container.x = (col - (cols - 1) / 2) * gapX;
                 card.container.y = (row - 0.2) * gapY;
-                card.container.on('pointertap', cardData.action);
+                card.container.on('pointertap', () => {
+                    this.resetIdle();
+                    cardData.action();
+                });
                 this.content.addChild(card.container);
             });
         }
@@ -66,13 +74,22 @@ export class Panel {
         this.target = 0;
     }
 
-    update() {
+    update(time) {
         this.progress += (this.target - this.progress) * 0.1;
         const eased = Ease.outCubic(this.progress);
         this.container.alpha = eased;
         const scale = 0.9 + 0.1 * eased;
         this.bg.scale.set(scale);
         this.content.scale.set(scale);
+        const slide = (1 - eased) * 30;
+        this.bg.y = this.app.screen.height / 2 + slide;
+        this.content.y = this.app.screen.height / 2 + slide;
+        if (this.visible) {
+            this.idleTimer += time ? time.delta / 1000 : 0.016;
+            if (this.idleTimer > this.autoCloseDelay) {
+                this.close();
+            }
+        }
         if (this.progress < 0.01 && this.target === 0) {
             this.container.alpha = 0;
             this.visible = false;
@@ -82,5 +99,9 @@ export class Panel {
 
     resize() {
         this.draw();
+    }
+
+    resetIdle() {
+        this.idleTimer = 0;
     }
 }

@@ -32,6 +32,8 @@ export class DragDrop {
         this.dragging = false;
         this.target.scale.set(1);
         this.snap();
+        this.target.scale.set(0.98);
+        setTimeout(() => this.target.scale.set(1), 120);
     }
 
     onMove(event) {

@@ -51,6 +51,7 @@ export class SceneManager {
             this.current.update(time);
             this.fade = Math.min(1, this.fade + time.delta * 0.003);
             this.current.container.alpha = this.fade;
+            this.current.container.y = (1 - this.fade) * 18;
         }
     }
 

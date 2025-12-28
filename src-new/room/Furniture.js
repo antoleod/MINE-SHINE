@@ -1,5 +1,6 @@
 import * as PIXI from 'https://cdn.jsdelivr.net/npm/pixi.js@7.3.2/dist/pixi.mjs';
 import { TouchFeedback } from '../interaction/TouchFeedback.js';
+import { MathUtil } from '../utils/Math.js';
 
 const FURNITURE_STYLES = {
     bed: { color: 0xffc8dd, w: 180, h: 90 },
@@ -16,6 +17,8 @@ export class Furniture extends PIXI.Container {
     constructor(type, position) {
         super();
         this.type = type;
+        this.floatSeed = MathUtil.rand(0, 10);
+        this.baseY = position.y;
         this.graphic = new PIXI.Graphics();
         this.addChild(this.graphic);
         this.setStyle(type);
@@ -51,5 +54,10 @@ export class Furniture extends PIXI.Container {
 
     serialize() {
         return { type: this.type, x: this.x, y: this.y };
+    }
+
+    update(time) {
+        const wobble = Math.sin(time.elapsed * 0.001 + this.floatSeed) * 1.4;
+        this.y = this.baseY + wobble;
     }
 }
